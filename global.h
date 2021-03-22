@@ -49,17 +49,16 @@ typedef struct
 
 /* Section Header */
 typedef struct {
-    Elf32_Word    sh_name;    /* name - index into section header
-                       string table section */
-    Elf32_Word    sh_type;    /* type */
-    Elf32_Word    sh_flags;    /* flags */
-    Elf32_Addr    sh_addr;    /* address */
-    Elf32_Off     sh_offset;    /* file offset */
-    Elf32_Word    sh_size;    /* section size */
-    Elf32_Word    sh_link;    /* section header table index link */
-    Elf32_Word    sh_info;    /* extra information */
-    Elf32_Word    sh_addralign;    /* address alignment */
-    Elf32_Word    sh_entsize;    /* section entry size */
+    Elf32_Word    sh_name;          //段名
+    Elf32_Word    sh_type;          //段类型
+    Elf32_Word    sh_flags;         //
+    Elf32_Addr    sh_addr;          //段虚拟地址
+    Elf32_Off     sh_offset;        //段在ELF文件中的偏移
+    Elf32_Word    sh_size;          //段的长度
+    Elf32_Word    sh_link;          //段链接信息
+    Elf32_Word    sh_info;          //
+    Elf32_Word    sh_addralign;     //段地址对齐
+    Elf32_Word    sh_entsize;       //项的长度
 } Elf32_Shdr;
 
 
@@ -84,8 +83,9 @@ FILE * open_elf(const char *file_name);
 
 typedef struct{
     Elf32_Shdr shdr;
-    unsigned int section_size;
-    char* ptr;
+    unsigned int section_size;  //section的大小
+    char* ptr;                  //
+    unsigned int section_offset;   //section 在ELF文件中的
 }Section_Unit;
 
 #endif
