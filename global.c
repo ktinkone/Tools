@@ -15,8 +15,8 @@ void print_hex(const char *str,size_t len){
 *Init Global var
 **********************************************************************************/
 void global_init(Global_Var* global_var, const char* file_name) {
-    global_var->fp = open_elf(file_name);
-    read_Elf_Header(global_var->fp, &global_var->elf_hdr);
+    open_elf(global_var,file_name);
+    read_Elf_Header(global_var);
     
     global_var->pht_offset = global_var->elf_hdr.e_phoff;
     global_var->ph_num = global_var->elf_hdr.e_phnum;
@@ -28,15 +28,15 @@ void global_init(Global_Var* global_var, const char* file_name) {
 /**********************************************************************************
 *Open Elf file
 **********************************************************************************/
-FILE * open_elf(const char *file_name){
+int open_elf(Global_Var *global_var,const char *file_name){
     FILE *fp=fopen(file_name,"rb+");
     if(fp==NULL){
         printf("Open Elf file : %s failed\n",file_name);
         exit(-1);
     }
-    return fp;
+    global_var->fp = fp;
+    return 0;
 }
-
 
 /**********************************************************************************
 *打印section table 中所有内容 （测试用）
@@ -46,7 +46,7 @@ int print_all_sections(Global_Var *global_var) {
     Elf32_Shdr tmp;
     for (index; index < global_var->sect_num; index++) {
         tmp = global_var->sht[index].shdr;
-        printf("virtual addr->%x   elf offset->%x   section size->%x", tmp.sh_addr, tmp.sh_offset, tmp.sh_size);
+        printf("index : %d virtual addr->%8x:%d   elf offset->%8x:%d   section size->%8x:%d  \n",index, tmp.sh_addr, tmp.sh_addr, tmp.sh_offset, tmp.sh_offset, tmp.sh_size,tmp.sh_size);
     }
     return 0;
 }

@@ -76,34 +76,57 @@ int read_section_table(Global_Var* global_var) {
         tmp->section_offset = tmp->shdr.sh_offset;
         tmp->section_size = tmp->shdr.sh_size;
         tmp->ptr = NULL;
-
-        //读取单个section
-        read_section(global_var,tmp);
     }
+
+    read_all_sections(global_var);
     return 1;
 }
 
 
-
 /**********************************************************************************
-*根据section table 中的内容读取单个section的内容
+*根据section unit 中的内容读取单个section的内容
 **********************************************************************************/
 int read_section(Global_Var *global_var,Section_Unit *sec_unit){
-    sec_unit->section_size=sec_unit->shdr.sh_size;
-    
+
+    //如果size=0，就什么都不用读
+    if (sec_unit->section_size == 0) {
+        sec_unit->ptr = NULL;
+        return 1;
+    }
     //为每个section分配空间
     sec_unit->ptr=malloc(sec_unit->section_size);
-    
+    if (sec_unit->ptr == NULL) {
+        printf("read section -> malloc error!\n");
+        exit(-1);
+    }
+
     //根据Elf32_Shdr结构体，读取单个section的内容
     //置位fp指针
     if(fseek(global_var->fp,sec_unit->section_offset,SEEK_SET)!=0){
         printf("read section -> fseek error!\n");
+        free(sec_unit->ptr);
+        sec_unit->ptr = NULL;
         exit(-1);
     }
     //读取section内容
     if(fread(sec_unit->ptr,sec_unit->section_size,1,global_var->fp)!=1){
         printf("read section -> fread error!\n");
+        free(sec_unit->ptr);
+        sec_unit->ptr = NULL;
         exit(-1);
     }
     return 1;
+}
+
+/**********************************************************************************
+*根据section table 中的内容  读取所有section的内容
+**********************************************************************************/
+int read_all_sections(Global_Var* global_var) {
+    Section_Unit* tmp;
+    unsigned int index = 0;
+    for (index; index < global_var->sect_num; index++) {
+        tmp = &global_var->sht[index];
+        read_section(global_var,tmp);
+    }
+    return 0;
 }

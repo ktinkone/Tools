@@ -83,7 +83,7 @@ typedef struct {
 
 void print_hex(const char* str, size_t len);
 void global_init(Global_Var* global_var, const char* file_name);
-FILE* open_elf(const char* file_name);
+int open_elf(Global_Var* global_var, const char* file_name);
 int print_all_sections(Global_Var* global_var);
 
 #endif
