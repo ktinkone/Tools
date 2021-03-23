@@ -4,14 +4,10 @@
 #include<stdio.h>
 #include "global.h"
 
-//先用定长数组
-Elf32_Phdr pht[100];
-Elf32_Shdr sht[100];
 
-
-
-
-int read_Elf_Header(FILE *fp,Elf32_Ehdr *elf_header);
-
+int read_Elf_Header(Global_Var* global_var);
+int read_prog_header(Global_Var* global_var);
+int read_section_table(Global_Var* global_var);
+int read_section(Global_Var* global_var, Section_Unit* sec_unit);
 
 #endif

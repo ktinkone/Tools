@@ -11,21 +11,6 @@ typedef uint32_t Elf32_Word;
 typedef uint32_t Elf32_Off;
 
 
-Elf32_Phdr  pht[50];
-Section_Unit sht[50];
-
-typedef struct {
-    FILE         *fp;
-    Elf32_Ehdr   elf_hdr;
-    unsigned int file_size;
-    unsigned int sht_offset;
-    unsigned int pht_offset;
-    unsigned int ph_num;
-    unsigned int sect_num;
-    Elf32_Phdr*  pht;
-    Elf32_Shdr*  sht;
-
-}Global_Var;
 
 
 /*ELF Header*/
@@ -74,18 +59,31 @@ typedef struct {
     Elf32_Word    p_align;    /* memory alignment */
 } Elf32_Phdr;
 
-
-void global_init(Global_Var *global_var,const char * file_name);
-void print_hex(const char *str,size_t len);
-FILE * open_elf(const char *file_name);
-
-
-
-typedef struct{
+typedef struct {
     Elf32_Shdr shdr;
-    unsigned int section_size;  //section的大小
-    char* ptr;                  //
-    unsigned int section_offset;   //section 在ELF文件中的
+    unsigned int section_size;       //section的大小
+    char* ptr;                       //
+    unsigned int section_offset;    //section 在ELF文件中的
 }Section_Unit;
+
+
+typedef struct {
+    FILE* fp;
+    Elf32_Ehdr   elf_hdr;
+    unsigned int file_size;
+    unsigned int sht_offset;
+    unsigned int pht_offset;
+    unsigned int ph_num;
+    unsigned int sect_num;
+    Elf32_Phdr     pht[50];
+    Section_Unit   sht[50];
+}Global_Var;
+
+
+
+void print_hex(const char* str, size_t len);
+void global_init(Global_Var* global_var, const char* file_name);
+FILE* open_elf(const char* file_name);
+int print_all_sections(Global_Var* global_var);
 
 #endif

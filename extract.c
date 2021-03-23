@@ -4,27 +4,27 @@
 #include "global.h"
 
 
-extern Elf32_Phdr  pht[50];
-extern Section_Unit sht[50];
 
 /**********************************************************************************
 *read Elf_Header from elf file
 **********************************************************************************/
-int read_Elf_Header(FILE *fp,Elf32_Ehdr *elf_header){
-    size_t i;
-    if(fp==NULL){
-        printf("fp can not be NULL\n");
-        return -1;
+int read_Elf_Header(Global_Var *global_var){
+    unsigned int index;
+    //fseek
+    if (fseek(global_var->fp, 0, SEEK_SET) != 0) {
+        printf("read elf header -> fseek error!\n");
+        exit(-1);
     }
-    if(fread(elf_header,sizeof(Elf32_Ehdr),1,fp)!=1){
+    if(fread(&global_var->elf_hdr,sizeof(Elf32_Ehdr),1,global_var->fp)!=1){
         printf("read elf header failed!\n");
         return -1;
     }
-    //simple judge if file is elf file
-    if(((char *) elf_header)[0]==0x7f&&((char *) elf_header)[1]==0x45){
+    //简单判断一下是不是ELF文件，判断开头两个魔术数
+    if(global_var->elf_hdr.e_ident[0]==0x7f&&global_var->elf_hdr.e_ident[1]==0x45){
         printf("read elf  header success!\n");
         return 1;
-    }else{
+    }
+    else{
         printf("File is not a elf file !\n");
         return -1;
     }
@@ -35,7 +35,7 @@ int read_Elf_Header(FILE *fp,Elf32_Ehdr *elf_header){
 *read programe header table
 **********************************************************************************/
 int read_prog_header(Global_Var *global_var){
-    int index = 0;
+    unsigned int  index = 0;
     //fseek
     if (fseek(global_var->fp, global_var->pht_offset, SEEK_SET) != 0) {
         printf("read prog header table-> fseek error!\n");
@@ -43,12 +43,11 @@ int read_prog_header(Global_Var *global_var){
     }
     //read pht
     for (index; index < global_var->ph_num; index++) {
-        if (fread(&pht[index], sizeof(Elf32_Phdr), 1, global_var->fp) != 1) {
+        if (fread(&global_var->pht[index], sizeof(Elf32_Phdr), 1, global_var->fp) != 1) {
             printf("read prog header table-> fread error!\n");
             exit(-1);
         }
     }
-    global_var->pht = &pht[0];
     return 1;
 }
 
@@ -60,24 +59,26 @@ int read_prog_header(Global_Var *global_var){
 int read_section_table(Global_Var* global_var) {
     int index = 0;
     
+    Section_Unit* tmp;
+
     //置位文件读取指针
     if(fseek(global_var->fp,global_var->sht_offset,SEEK_SET)!=0){
         printf("read section table -> fseek error!\n");
         exit(-1);
     }
-
     //读取section table中所有的内容   (读结构体时，不用fread一次性读完，先分开读，不知道会不会存在结构体对齐的问题)
     for(index;index<global_var->sect_num;index++){
-        if(fread(&sht[index],sizeof(Elf32_Shdr),1,global_var->fp)!=1){
+        tmp = &(global_var->sht[index]);
+        if(fread(&tmp->shdr,sizeof(Elf32_Shdr),1,global_var->fp)!=1){
             printf("read section table -> fread error!\n");
         }
-        //
-        sht[index].section_size= sht[index].shdr.sh_size;
-        sht[index].section_offset=sht[index].shdr.sh_offset;
-        sht[index].ptr=NULL;
+
+        tmp->section_offset = tmp->shdr.sh_offset;
+        tmp->section_size = tmp->shdr.sh_size;
+        tmp->ptr = NULL;
 
         //读取单个section
-        read_section(global_var,&sht[index]);
+        read_section(global_var,tmp);
     }
     return 1;
 }
