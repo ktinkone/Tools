@@ -1,18 +1,14 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
+
 #include<stdio.h>
 #include<stdint.h>
-
 
 #define EI_NIDENT 16
 typedef uint16_t Elf32_Half;
 typedef uint32_t Elf32_Addr;
 typedef uint32_t Elf32_Word;
 typedef uint32_t Elf32_Off;
-
-
-
-
 /*ELF Header*/
 typedef struct
 {
@@ -66,24 +62,25 @@ typedef struct {
     unsigned int section_offset;    //section 在ELF文件中的
 }Section_Unit;
 
-
 typedef struct {
     FILE* fp;
+    FILE* tgt_fp;                   //target file fp
     Elf32_Ehdr   elf_hdr;
     unsigned int file_size;
     unsigned int sht_offset;
     unsigned int pht_offset;
     unsigned int ph_num;
     unsigned int sect_num;
+    unsigned int pre_file_size;
+    unsigned int tar_flie_size;
     Elf32_Phdr     pht[50];
     Section_Unit   sht[50];
 }Global_Var;
 
 
+int  print_all_sections(Global_Var* global_var);
 
 void print_hex(const char* str, size_t len);
-void global_init(Global_Var* global_var, const char* file_name);
-int open_elf(Global_Var* global_var, const char* file_name);
-int print_all_sections(Global_Var* global_var);
+void write_stream_by_offset(char* buf, unsigned int len, unsigned int start, FILE* fp);
 
 #endif

@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include "global.h"
-#include "extract.h"
 
 #pragma   warning(disable:4996)
 
@@ -11,32 +10,6 @@ void print_hex(const char *str,size_t len){
     }
 }
 
-/**********************************************************************************
-*Init Global var
-**********************************************************************************/
-void global_init(Global_Var* global_var, const char* file_name) {
-    open_elf(global_var,file_name);
-    read_Elf_Header(global_var);
-    
-    global_var->pht_offset = global_var->elf_hdr.e_phoff;
-    global_var->ph_num = global_var->elf_hdr.e_phnum;
-
-    global_var->sect_num = global_var->elf_hdr.e_shnum;
-    global_var->sht_offset = global_var->elf_hdr.e_shoff;
-}
-
-/**********************************************************************************
-*Open Elf file
-**********************************************************************************/
-int open_elf(Global_Var *global_var,const char *file_name){
-    FILE *fp=fopen(file_name,"rb+");
-    if(fp==NULL){
-        printf("Open Elf file : %s failed\n",file_name);
-        exit(-1);
-    }
-    global_var->fp = fp;
-    return 0;
-}
 
 /**********************************************************************************
 *打印section table 中所有内容 （测试用）
@@ -51,3 +24,24 @@ int print_all_sections(Global_Var *global_var) {
     return 0;
 }
 
+
+/**********************************************************************************
+*将字符串写入文件流
+**********************************************************************************/
+void write_stream_by_offset(char *buf, unsigned int len,unsigned int start, FILE* fp) {
+    
+
+    if (len==0||buf==NULL||fp==NULL) {
+        printf("write stream error -> len == 0 || buf = NULL!||fp==NULL\n");
+        return ;
+    }
+
+    if (fseek(fp, start, SEEK_SET) != 0) {
+        printf("write stream -> fseek error !\n");
+        exit(-1);
+    }
+
+    if (fwrite(buf,len,1,fp) != 1) {
+        printf("write stream -> fwrite error !\n");
+    }
+}
