@@ -13,5 +13,5 @@ int read_prog_header(Global_Var* global_var);
 int read_section_table(Global_Var* global_var);
 int read_section(Global_Var* global_var, Section_Unit* sec_unit);
 int read_all_sections(Global_Var* global_var);
-
+int read_all_section_name(Global_Var* global_var);
 #endif

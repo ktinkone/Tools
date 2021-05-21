@@ -1,1 +1,1 @@
-gcc -o main global.c main.c inject.c extract.c
+gcc -o tool global.c global.h init.c init.h main.c read.c read.h write.c write.h

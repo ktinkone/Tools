@@ -1,3 +1,9 @@
+/***********************************************************
+* 
+*this file is write to construct target elf file
+* 
+***********************************************************/
+
 #include "write.h"
 
 
@@ -5,7 +11,7 @@
 *write elf header 
 **********************************************************************************/
 int write_elf_header(Global_Var *global_var) {
-	printf("write_elf_header\n");
+	printf("-----------------------write_elf_header------------------------\n");
 	write_stream_by_offset(&global_var->elf_hdr, sizeof(Elf32_Ehdr), 0, global_var->tgt_fp);;
 	return 0;
 }
@@ -14,10 +20,9 @@ int write_elf_header(Global_Var *global_var) {
 *write pht
 **********************************************************************************/
 int write_pht(Global_Var* global_var) {
-	printf("write_pht\n");
+	printf("-----------------------write_program_header_table---------------\n");
 	int index = 0;
 	unsigned int offset = global_var->pht_offset;
-	//可以不用每次都算便宜，直接一个fread直接写
 	for (index; index < global_var->ph_num; index++) {
 		write_stream_by_offset(&global_var->pht[index], sizeof(Elf32_Phdr),offset,global_var->tgt_fp);
 		offset +=sizeof(Elf32_Phdr);
@@ -30,7 +35,7 @@ int write_pht(Global_Var* global_var) {
 *write  all sections
 **********************************************************************************/
 int write_all_sections(Global_Var* global_var) {
-	printf("write_all_sections\n");
+	printf("-----------------------write_all_sections-------------------------\n");
 	int index = 0;
 	unsigned int offset = 0;
 	unsigned int len = 0;
@@ -39,6 +44,7 @@ int write_all_sections(Global_Var* global_var) {
 		buf = global_var->sht[index].ptr;
 		offset = global_var->sht[index].section_offset;
 		len = global_var->sht[index].section_size;
+		printf("section num: %d   len:%d \n",index,len);
 		write_stream_by_offset(buf,len, offset, global_var->tgt_fp);
 	}
 	return 0;
@@ -49,7 +55,7 @@ int write_all_sections(Global_Var* global_var) {
 *write  sht
 **********************************************************************************/
 int write_sht(Global_Var* global_var) {
-	printf("write_sht\n");
+	printf("----------------------write_section_header_table----------------------- \n");
 	int index = 0;
 	unsigned int offset = global_var->sht_offset;
 	unsigned int len = 0;

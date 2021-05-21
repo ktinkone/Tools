@@ -58,8 +58,9 @@ typedef struct {
 typedef struct {
     Elf32_Shdr shdr;
     unsigned int section_size;       //section的大小
-    char* ptr;                       //
-    unsigned int section_offset;    //section 在ELF文件中的
+    char* ptr;                       //section的内容
+    unsigned int section_offset;     //section 在ELF文件中的
+    char  name[50];                  //section name 
 }Section_Unit;
 
 typedef struct {

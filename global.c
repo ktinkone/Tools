@@ -12,21 +12,21 @@ void print_hex(const char *str,size_t len){
 
 
 /**********************************************************************************
-*´òÓ¡section table ÖĞËùÓĞÄÚÈİ £¨²âÊÔÓÃ£©
+*æ‰“å°section table ä¸­æ‰€æœ‰å†…å®¹ ï¼ˆæµ‹è¯•ç”¨ï¼‰
 **********************************************************************************/
 int print_all_sections(Global_Var *global_var) {
-    unsigned int index = 0;
-    Elf32_Shdr tmp;
+    unsigned int index = 1;
+    Section_Unit tmp;
     for (index; index < global_var->sect_num; index++) {
-        tmp = global_var->sht[index].shdr;
-        printf("index : %d virtual addr->%8x:%d   elf offset->%8x:%d   section size->%8x:%d  \n",index, tmp.sh_addr, tmp.sh_addr, tmp.sh_offset, tmp.sh_offset, tmp.sh_size,tmp.sh_size);
+        tmp = global_var->sht[index];
+        printf("name : %s virtual addr->%8x:%d   elf offset->%8x:%d   section size->%8x:%d  \n",tmp.name, tmp.shdr.sh_addr, tmp.shdr.sh_addr, tmp.shdr.sh_offset, tmp.shdr.sh_offset, tmp.shdr.sh_size,tmp.shdr.sh_size);
     }
     return 0;
 }
 
 
 /**********************************************************************************
-*½«×Ö·û´®Ğ´ÈëÎÄ¼şÁ÷
+*å°†å­—ç¬¦ä¸²å†™å…¥æ–‡ä»¶æµ
 **********************************************************************************/
 void write_stream_by_offset(char *buf, unsigned int len,unsigned int start, FILE* fp) {
     
